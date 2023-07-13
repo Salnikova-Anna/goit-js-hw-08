@@ -31,18 +31,23 @@ function populateFormFields() {
   const storageData = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
   if (storageData) {
-    refs.input.value = storageData.email;
-    refs.textarea.value = storageData.message;
+    refs.input.value = storageData.email ? storageData.email : '';
+    refs.textarea.value = storageData.message ? storageData.message : '';
   }
-
-  //   refs.input.value = storageData.email ? storageData.email : '';
-  //   refs.textarea.value = storageData.message ? storageData.message : '';
 }
 
 function onButtonSubmitClick(event) {
   event.preventDefault();
 
   event.target.reset();
-  console.log(JSON.parse(localStorage.getItem(STORAGE_KEY)));
+
+  const storageCurrentValue = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+  if (storageCurrentValue) {
+    console.log(storageCurrentValue);
+  } else {
+    alert('Please, fill out the form fields');
+  }
+
   localStorage.removeItem(STORAGE_KEY);
 }
