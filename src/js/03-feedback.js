@@ -8,9 +8,16 @@ const refs = {
 
 const STORAGE_KEY = 'feedback-form-state';
 
-const storageValue = {};
-
 populateFormFields();
+
+let newStorageValue = {};
+
+const storedValue = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+if (storedValue) {
+  newStorageValue.email = storedValue.email || '';
+  newStorageValue.message = storedValue.message || '';
+}
 
 refs.form.addEventListener('input', throttle(onFormInputClick, 500));
 refs.form.addEventListener('submit', onButtonSubmitClick);
@@ -18,13 +25,9 @@ refs.form.addEventListener('submit', onButtonSubmitClick);
 function onFormInputClick(event) {
   event.preventDefault();
 
-  if (event.target.tagName === 'INPUT') {
-    storageValue.email = event.target.value;
-  } else if (event.target.tagName === 'TEXTAREA') {
-    storageValue.message = event.target.value;
-  }
+  newStorageValue[event.target.name] = event.target.value;
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(storageValue));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(newStorageValue));
 }
 
 function populateFormFields() {
@@ -39,15 +42,17 @@ function populateFormFields() {
 function onButtonSubmitClick(event) {
   event.preventDefault();
 
-  event.target.reset();
+  const { email, message } = event.target.elements;
 
-  const storageCurrentValue = JSON.parse(localStorage.getItem(STORAGE_KEY));
-
-  if (storageCurrentValue) {
-    console.log(storageCurrentValue);
-  } else {
-    alert('Please, fill out the form fields');
+  if (email.value === '' || message.value === '') {
+    return alert('Please fill in all the fields!');
   }
+
+  console.log(newStorageValue);
+
+  newStorageValue = {};
+
+  event.currentTarget.reset();
 
   localStorage.removeItem(STORAGE_KEY);
 }
